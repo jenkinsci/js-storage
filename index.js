@@ -12,7 +12,12 @@ exports.local = local;
 const TYPE_OBJECT = '_$_object:';
 const TYPE_NUMBER = '_$_number:';
 
-exports.set = function (name, value) {
+/**
+ * Set a value in local storage.
+ * @param name The name/key of the value.
+ * @param value The value to be stored. Accepts a string, object or number.
+ */
+exports.setLocal = function (name, value) {
     if (name === undefined || name === null) {
         throw new Error('Unexpected call to store via undefined/null name.');
     }
@@ -32,7 +37,14 @@ exports.set = function (name, value) {
     }
 };
 
-exports.get = function (name) {
+/**
+ * Get a value in local storage.
+ * @param name The name/key of the value.
+ * @return The stored value, or undefined if no value is stored against that name/key.
+ * Returns a string, object or number, depending on the type of the value when it was
+ * stored (set {@link #setLocal}).
+ */
+exports.getLocal = function (name) {
     const value = local.getItem(name);
 
     if (value === undefined) {
