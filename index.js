@@ -47,7 +47,7 @@ exports.setLocal = function (name, value) {
 exports.getLocal = function (name) {
     const value = local.getItem(name);
 
-    if (value === undefined) {
+    if (typeof value !== 'string') {
         return undefined;
     }
 
@@ -59,4 +59,13 @@ exports.getLocal = function (name) {
     }
 
     return value;
+};
+
+
+/**
+ * Remove a value in local storage.
+ * @param name The name/key of the value.
+ */
+exports.removeLocal = function (name) {
+    local.removeItem(name);
 };
