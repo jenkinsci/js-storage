@@ -23,6 +23,11 @@ describe("Storage of different types", function() {
         expect(storage.getLocal('a')).toBe(1234.12);
     });
 
+    it("boolean", function() {
+        storage.setLocal('a', true);
+        expect(storage.getLocal('a')).toBe(true);
+    });
+
     it("unsupported", function() {
         try {
             storage.setLocal('a', function(){});

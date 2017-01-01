@@ -11,11 +11,12 @@ exports.local = local;
 
 const TYPE_OBJECT = '_$_object:';
 const TYPE_NUMBER = '_$_number:';
+const TYPE_BOOLEAN = '_$_boolean:';
 
 /**
  * Set a value in local storage.
  * @param name The name/key of the value.
- * @param value The value to be stored. Accepts a string, object or number.
+ * @param value The value to be stored. Accepts a string, object, boolean or number.
  */
 exports.setLocal = function (name, value) {
     if (name === undefined || name === null) {
@@ -32,6 +33,8 @@ exports.setLocal = function (name, value) {
         local.setItem(name, TYPE_OBJECT + JSON.stringify(value));
     } else if (type === 'number') {
         local.setItem(name, TYPE_NUMBER + value);
+    } else if (type === 'boolean') {
+        local.setItem(name, TYPE_BOOLEAN + value);
     } else {
         throw new Error('Unexpected call to store type "' + type + '". Name: ' + name);
     }
@@ -41,7 +44,7 @@ exports.setLocal = function (name, value) {
  * Get a value in local storage.
  * @param name The name/key of the value.
  * @return The stored value, or undefined if no value is stored against that name/key.
- * Returns a string, object or number, depending on the type of the value when it was
+ * Returns a string, object, boolean or number, depending on the type of the value when it was
  * stored (set {@link #setLocal}).
  */
 exports.getLocal = function (name) {
@@ -56,6 +59,9 @@ exports.getLocal = function (name) {
     }
     if (value.substring(0, TYPE_NUMBER.length) === TYPE_NUMBER) {
         return Number(value.substring(TYPE_NUMBER.length));
+    }
+    if (value.substring(0, TYPE_BOOLEAN.length) === TYPE_BOOLEAN) {
+        return Boolean(value.substring(TYPE_BOOLEAN.length));
     }
 
     return value;
