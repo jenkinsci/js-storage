@@ -40,6 +40,17 @@ exports.removeLocal = function (name) {
     local.removeItem(name);
 };
 
+/**
+ * Get a local namespace.
+ * <p>
+ * Returns a {@link Namespace} instance that can be used to perform operations on values in the namespace.
+ * @param name The namespace name.
+ * @returns {Namespace}
+ */
+exports.localNamespace = function(name) {
+    return new Namespace(name, local);
+};
+
 function set(name, value, storage) {
     if (name === undefined || name === null) {
         throw new Error('Unexpected call to store via undefined/null name.');
@@ -81,3 +92,25 @@ function get(name, storage) {
 
     return value;
 }
+
+/**
+ * Namespace
+ * @param name The name of the namespace. A dot seprated value indicates sub-namespacing.
+ * @param storage The storage to use.
+ * @constructor
+ */
+function Namespace(name, storage) {
+    this.namespaceName = name;
+    this.storage = storage;
+}
+Namespace.prototype = {
+    set: function (name, value) {
+        return set(this.namespaceName + '.' + name, value, this.storage);
+    },
+    get: function (name) {
+        return get(this.namespaceName + '.' + name, this.storage);
+    },
+    remove: function (name) {
+        return this.storage.removeItem(this.namespaceName + '.' + name);
+    }
+};
