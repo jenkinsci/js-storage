@@ -43,12 +43,12 @@ exports.removeLocal = function (name) {
 /**
  * Get a local namespace.
  * <p>
- * Returns a {@link Namespace} instance that can be used to perform operations on values in the namespace.
+ * Returns a {@link StorageNamespace} instance that can be used to perform operations on values in the namespace.
  * @param name The namespace name.
- * @returns {Namespace}
+ * @returns {StorageNamespace}
  */
 exports.localNamespace = function(name) {
-    return new Namespace(name, local);
+    return new StorageNamespace(name, local);
 };
 
 function set(name, value, storage) {
@@ -99,11 +99,11 @@ function get(name, storage) {
  * @param storage The storage to use.
  * @constructor
  */
-function Namespace(name, storage) {
+function StorageNamespace(name, storage) {
     this.namespaceName = name;
     this.storage = storage;
 }
-Namespace.prototype = {
+StorageNamespace.prototype = {
     set: function (name, value) {
         return set(this.namespaceName + '.' + name, value, this.storage);
     },
