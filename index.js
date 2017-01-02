@@ -152,6 +152,7 @@ StorageNamespace.prototype = {
     /**
      * Iterate the key/value pairs in this namespace.
      * @param {function} callback A callback that's called with the key (1st arg) value (2nd arg) pairs.
+     * <code>this</code> for the callback is set to "this" {StorageNamespace} instance.
      */
     iterate: function (callback) {
         const namespacePrefix = this.namespaceName + ':';
