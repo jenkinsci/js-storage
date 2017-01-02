@@ -145,16 +145,28 @@ StorageNamespace.prototype = {
      * Clear all stored values in this namespace.
      */
     clear: function() {
+        const self = this;
+        self.iterate(function(key) {
+            self.remove(key);
+        });
+    },
+    /**
+     * Iterate the key/value pairs in this namespace.
+     * @param {function} callback A callback that's called with the key (1st arg) value (2nd arg) pairs.
+     */
+    iterate: function (callback) {
         const namespacePrefix = this.namespaceName + ':';
-        const keysToRemove = [];
+        const nsKeys = [];
         for (var i = 0; i < this.storage.length; i++) {
             const keyName = this.storage.key(i);
             if (keyName.substring(0, namespacePrefix.length) === namespacePrefix) {
-                keysToRemove.push(keyName);
+                nsKeys.push(keyName);
             }
         }
-        for (var ii = 0; ii < keysToRemove.length; ii++) {
-            this.storage.removeItem(keysToRemove[ii]);
+        for (var ii = 0; ii < nsKeys.length; ii++) {
+            var nsKey = nsKeys[ii].substring(namespacePrefix.length);
+            var nsValue = this.storage.getItem(nsKey);
+            callback(nsKey, nsValue);
         }
     },
     /**
