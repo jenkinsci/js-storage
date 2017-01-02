@@ -50,6 +50,7 @@ exports.removeLocal = function (name) {
  * Returns a {@link StorageNamespace} instance that can be used to perform operations on values in the namespace.
  * @param {string} name The namespace name.
  * @returns {StorageNamespace} The storage namespace.
+ * @see {@link StorageNamespace#subspace}
  */
 exports.localNamespace = function(name) {
     return new StorageNamespace(name, local);
@@ -139,5 +140,19 @@ StorageNamespace.prototype = {
      */
     remove: function (name) {
         return this.storage.removeItem(this.namespaceName + ':' + name);
+    },
+    /**
+     * Create a sub-namespace of this namespace.
+     * <p>
+     * Creating a sub-space "y" from a namespace "x" will result in a new namespace named "x/y" (see example below).
+     * @param {string} name The name of the sub-space.
+     * @returns {StorageNamespace} The storage namespace.
+     * @example
+     * const storage = require('@jenkins-cd/storage');
+     * const x = storage.localNamespace('x'); // "x"
+     * const y = x.subspace('y'); // "x/y"
+     */
+    subspace: function(name) {
+        return new StorageNamespace(this.namespaceName + '/' + name, this.storage);
     }
 };
