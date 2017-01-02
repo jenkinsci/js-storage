@@ -166,7 +166,11 @@ StorageNamespace.prototype = {
         for (var ii = 0; ii < nsKeys.length; ii++) {
             var nsKey = nsKeys[ii].substring(namespacePrefix.length);
             var nsValue = this.storage.getItem(nsKey);
-            callback(nsKey, nsValue);
+            try {
+                callback(nsKey, nsValue);
+            } catch (e) {
+                console.error('Error iterating storage namespace.', e);
+            }
         }
     },
     /**
