@@ -1,1 +1,1 @@
-# jenkins-js-storage
+Jenkins client-side storage.

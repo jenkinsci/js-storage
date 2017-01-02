@@ -1,3 +1,7 @@
+/**
+ * Jenkins client-side storage.
+ */
+
 if (global.window === undefined) {
     global.window = {};
 }
@@ -14,8 +18,8 @@ const TYPE_BOOLEAN = '_$_boolean:';
 
 /**
  * Set a value in local storage.
- * @param name The name/key of the value.
- * @param value The value to be stored. Accepts a string, object, boolean or number.
+ * @param {string} name The name/key of the value.
+ * @param {string|object|boolean|number} value The value to be stored. Accepts a string, object, boolean or number.
  */
 exports.setLocal = function (name, value) {
     set(name, value, local);
@@ -23,8 +27,8 @@ exports.setLocal = function (name, value) {
 
 /**
  * Get a value in local storage.
- * @param name The name/key of the value.
- * @return The stored value, or undefined if no value is stored against that name/key.
+ * @param {string} name The name/key of the value.
+ * @return {string|object|boolean|number} The stored value, or undefined if no value is stored against that name/key.
  * Returns a string, object, boolean or number, depending on the type of the value when it was
  * stored (set {@link #setLocal}).
  */
@@ -34,7 +38,7 @@ exports.getLocal = function (name) {
 
 /**
  * Remove a value in local storage.
- * @param name The name/key of the value.
+ * @param {string} name The name/key of the value.
  */
 exports.removeLocal = function (name) {
     local.removeItem(name);
@@ -44,8 +48,8 @@ exports.removeLocal = function (name) {
  * Get a local namespace.
  * <p>
  * Returns a {@link StorageNamespace} instance that can be used to perform operations on values in the namespace.
- * @param name The namespace name.
- * @returns {StorageNamespace}
+ * @param {string} name The namespace name.
+ * @returns {StorageNamespace} The storage namespace.
  */
 exports.localNamespace = function(name) {
     return new StorageNamespace(name, local);
@@ -94,9 +98,18 @@ function get(name, storage) {
 }
 
 /**
- * Namespace
- * @param name The name of the namespace. A dot seprated value indicates sub-namespacing.
- * @param storage The storage to use.
+ * Storage Namespace.
+ * <p>
+ * This class allows us to "unflatten" the client Storage (localStorage or sessionStorage) i.e. allows us to introduce
+ * an artificial hierarchy within the Storage.
+ * <p>
+ * This works by prefixing the key names with a namespace, allowing the clearing of a set of values by namespace,
+ * as well as storing values by the same name within different namespaces e.g. creating to StorageNamespace instances
+ * named "a/b" and "a/z" and setting a value on key "org.jenkins.magickey" on both would work perfectly fine as they
+ * would be stored in the underlying storage via keys "a/b:org.jenkins.magickey" and "a/z:org.jenkins.magickey".
+ *
+ * @param {string} name The name of the namespace. A forward slash separated value indicates sub-namespacing e.g. "a/b".
+ * @param {Storage} storage The storage instance to use e.g. {@link window.localStorage} or {@link window.sessionStorage}.
  * @constructor
  */
 function StorageNamespace(name, storage) {
@@ -104,13 +117,27 @@ function StorageNamespace(name, storage) {
     this.storage = storage;
 }
 StorageNamespace.prototype = {
+    /**
+     * Set a value in the namespace.
+     * @param {string} name The name/key.
+     * @param {string|object|boolean|number} value The value.
+     */
     set: function (name, value) {
-        return set(this.namespaceName + '.' + name, value, this.storage);
+        return set(this.namespaceName + ':' + name, value, this.storage);
     },
+    /**
+     * Get a value from the namespace.
+     * @param {string} name The name/key.
+     * @return {string|object|boolean|number} The value.
+     */
     get: function (name) {
-        return get(this.namespaceName + '.' + name, this.storage);
+        return get(this.namespaceName + ':' + name, this.storage);
     },
+    /**
+     * Remove a value from the namespace.
+     * @param {string} name The name/key.
+     */
     remove: function (name) {
-        return this.storage.removeItem(this.namespaceName + '.' + name);
+        return this.storage.removeItem(this.namespaceName + ':' + name);
     }
 };

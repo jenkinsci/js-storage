@@ -4,7 +4,8 @@
   "description": "Browser storage for Jenkins JavaScript libraries",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine spec/*.js"
+    "test": "jasmine spec/*.js",
+    "jsdoc": "jsdoc -d jsdoc index.js README.md"
   },
   "author": "Tom Fennelly <tom.fennelly@gmail.com>",
   "license": "MIT",
@@ -12,6 +13,7 @@
     "localstorage-memory": "^1.0.2"
   },
   "devDependencies": {
-    "jasmine": "^2.5.2"
+    "jasmine": "^2.5.2",
+    "jsdoc": "^3.4.3"
   }
 }
