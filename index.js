@@ -145,9 +145,8 @@ StorageNamespace.prototype = {
      * Clear all stored values in this namespace.
      */
     clear: function() {
-        const self = this;
-        self.iterate(function(key) {
-            self.remove(key);
+        this.iterate(function(key) {
+            this.remove(key);
         });
     },
     /**
@@ -167,7 +166,7 @@ StorageNamespace.prototype = {
             var nsKey = nsKeys[ii].substring(namespacePrefix.length);
             var nsValue = this.storage.getItem(nsKey);
             try {
-                callback(nsKey, nsValue);
+                callback.call(this, nsKey, nsValue);
             } catch (e) {
                 console.error('Error iterating storage namespace.', e);
             }
