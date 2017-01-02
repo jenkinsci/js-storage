@@ -142,6 +142,22 @@ StorageNamespace.prototype = {
         return this.storage.removeItem(this.namespaceName + ':' + name);
     },
     /**
+     * Clear all stored values in this namespace.
+     */
+    clear: function() {
+        const namespacePrefix = this.namespaceName + ':';
+        const keysToRemove = [];
+        for (var i = 0; i < this.storage.length; i++) {
+            const keyName = this.storage.key(i);
+            if (keyName.substring(0, namespacePrefix.length) === namespacePrefix) {
+                keysToRemove.push(keyName);
+            }
+        }
+        for (var ii = 0; ii < keysToRemove.length; ii++) {
+            this.storage.removeItem(keysToRemove[ii]);
+        }
+    },
+    /**
      * Create a sub-namespace of this namespace.
      * <p>
      * Creating a sub-space "y" from a namespace "x" will result in a new namespace named "x/y" (see example below).

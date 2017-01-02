@@ -35,4 +35,29 @@ describe("Namespace tests", function() {
         y.remove('a');
         expect(y.get('a')).not.toBeDefined();
     });
+
+    it("clear", function() {
+        const x = storage.localNamespace('x');
+        const y = x.subspace('y');
+
+        // Storing values in both namespaces.
+        x.set('a', 'avalx');
+        x.set('b', 'bvalx');
+        y.set('a', 'avaly');
+        y.set('b', 'bvaly');
+        expect(x.get('a')).toBe('avalx');
+        expect(x.get('b')).toBe('bvalx');
+        expect(y.get('a')).toBe('avaly');
+        expect(y.get('b')).toBe('bvaly');
+
+        // Clear from one of the namespaces only.
+        x.clear();
+        expect(x.get('a')).not.toBeDefined();
+        expect(x.get('b')).not.toBeDefined();
+        expect(y.get('a')).toBe('avaly');
+        expect(y.get('b')).toBe('bvaly');
+        y.clear();
+        expect(y.get('a')).not.toBeDefined();
+        expect(y.get('b')).not.toBeDefined();
+    });
 });
