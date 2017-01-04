@@ -2,6 +2,10 @@ describe("Namespace tests", function() {
     var index = require('../index');
     var storage = require('../storage');
 
+    beforeEach(function() {
+        storage.local.clear();
+    });
+
     it("store and remove", function() {
         // store
         const namespace = index.localNamespace('jenkins');
@@ -37,21 +41,42 @@ describe("Namespace tests", function() {
         expect(y.get('a')).not.toBeDefined();
     });
 
-    it("clear", function() {
-        const x = index.localNamespace('x');
-        const y = x.subspace('y');
+    it("iterate", function() {
+        const jenkinsNS = index.jenkinsNamespace();
+        const x = jenkinsNS.subspace('x');
+        const y = jenkinsNS.subspace('y');
+        const z = y.subspace('y');
 
-        // Storing values in both namespaces.
+        x.set('a', 'val');
+        x.set('b', 'val');
+        x.set('c', 'val');
+        y.set('a', 'val');
+        y.set('b', 'val');
+        z.set('a', 'val');
+        z.set('b', 'val');
+
+        expect(x.count()).toBe(3);
+        expect(y.count()).toBe(4); // y + z (because z is a subspace of y)
+        expect(jenkinsNS.count()).toBe(7); // x + y + z (because x and y are subspaces of jenkinsNS and z is a subspace of y)
+    });
+
+    it("clear", function() {
+        const jenkinsNS = index.jenkinsNamespace();
+        const x = jenkinsNS.subspace('x');
+        const y = jenkinsNS.subspace('y');
+        const z = y.subspace('z');
+
+        // Storing values in all namespaces.
         x.set('a', 'avalx');
         x.set('b', 'bvalx');
         y.set('a', 'avaly');
         y.set('b', 'bvaly');
-        expect(x.get('a')).toBe('avalx');
-        expect(x.get('b')).toBe('bvalx');
+        z.set('a', 'avaly');
+        z.set('b', 'bvaly');
         expect(x.count()).toBe(2);
-        expect(y.get('a')).toBe('avaly');
-        expect(y.get('b')).toBe('bvaly');
-        expect(y.count()).toBe(2);
+        expect(y.count()).toBe(4); // y nested inside
+        expect(y.count(false)).toBe(2); // don't include subspaces
+        expect(z.count()).toBe(2);
 
         // Clear from one of the namespaces only.
         x.clear();
@@ -60,11 +85,11 @@ describe("Namespace tests", function() {
         expect(x.count()).toBe(0);
         expect(y.get('a')).toBe('avaly');
         expect(y.get('b')).toBe('bvaly');
-        expect(y.count()).toBe(2);
+        expect(y.count()).toBe(4);
+        expect(z.count()).toBe(2);
         y.clear();
-        expect(y.get('a')).not.toBeDefined();
-        expect(y.get('b')).not.toBeDefined();
         expect(y.count()).toBe(0);
+        expect(z.count()).toBe(0); // is nested inside y, so should be clearer too
     });
 
     it("jenkinsInstanceNamespace", function() {

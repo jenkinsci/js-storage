@@ -114,11 +114,12 @@ StorageNamespace.prototype = {
     },
     /**
      * Clear all stored values in this namespace.
+     * @param {undefined|boolean} clearSubspaces Also clear subspace values. Default <code>true</code>.
      */
-    clear: function() {
-        this.iterate(function(key) {
-            this.remove(key);
-        });
+    clear: function(clearSubspaces) {
+        this.iterate(function(key, value, namespace) {
+            return this.storageInst.removeItem(namespace + ':' + key);
+        }, clearSubspaces);
     },
     /**
      * Get the count of stored values in this namespace.
@@ -126,33 +127,68 @@ StorageNamespace.prototype = {
      * Note that this is not a "free" operation. This function iterates the
      * namespace values in order to count.
      * @return {number} The count of stored values in this namespace.
+     * @param {undefined|boolean} countSubspaces Also count subspace values. Default <code>true</code>.
      */
-    count: function() {
+    count: function(countSubspaces) {
         var count = 0;
         this.iterate(function() {
             count++;
-        });
+        }, countSubspaces);
         return count;
     },
     /**
      * Iterate the key/value pairs in this namespace.
-     * @param {function} callback A callback that's called with the key (1st arg) value (2nd arg) pairs.
+     * <p>
+     * Note, values in subspaces will also be sent to the callback.
+     * @param {function} callback A callback that's called with the key (1st arg) value (2nd arg) pairs,
+     * as well as the namespace (3rd arg) that the value is in (which can be a subspace).
      * <code>this</code> for the callback is set to "this" {StorageNamespace} instance.
+     * @param {undefined|boolean} iterateSubspaces Also iterate subspace values. Default <code>true</code>.
      */
-    iterate: function (callback) {
-        const namespacePrefix = this.namespaceName + ':';
-        const nsKeys = [];
+    iterate: function (callback, iterateSubspaces) {
+        const subspacePrefix = this.namespaceName + '/';
+        const matchedEntries = [];
+
+        // default iterateSubspaces to true.
+        if (iterateSubspaces === undefined) {
+            iterateSubspaces = true;
+        }
+
+        // Iterate all keys in the Storage, looking for
+        // keys where they are an exact match for this namespace,
+        // or a subspace of this namespace (if iterateSubspaces true).
+        // Add ref objects to matchedEntries for each match.
         for (var i = 0; i < this.storageInst.length; i++) {
-            const keyName = this.storageInst.key(i);
-            if (keyName.substring(0, namespacePrefix.length) === namespacePrefix) {
-                nsKeys.push(keyName);
+            const qName = this.storageInst.key(i);
+            const keyNameTokens = qName.split(':');
+            if (keyNameTokens.length > 1) {
+                const keyNamespace = keyNameTokens.shift();
+                const key = keyNameTokens.join(':');
+                if (keyNamespace === this.namespaceName) {
+                    // Exact namespace match
+                    matchedEntries.push({
+                        qName: qName,
+                        namespace: keyNamespace,
+                        key: key
+                    });
+                } else if (iterateSubspaces && keyNamespace.substring(0, subspacePrefix.length) === subspacePrefix) {
+                    // Subspace match
+                    matchedEntries.push({
+                        qName: qName,
+                        namespace: keyNamespace,
+                        key: key
+                    });
+                }
             }
         }
-        for (var ii = 0; ii < nsKeys.length; ii++) {
-            var nsKey = nsKeys[ii].substring(namespacePrefix.length);
-            var nsValue = this.storageInst.getItem(nsKey);
+
+        // Iterate the ref objects in matchedEntries, calling the
+        // callback for each object.
+        for (var ii = 0; ii < matchedEntries.length; ii++) {
+            var matchedEntry = matchedEntries[ii];
+            var nsValue = this.storageInst.getItem(matchedEntry.qName);
             try {
-                callback.call(this, nsKey, nsValue);
+                callback.call(this, matchedEntry.key, nsValue, matchedEntry.namespace);
             } catch (e) {
                 console.error('Error iterating storage namespace.', e);
             }
