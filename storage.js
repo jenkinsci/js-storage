@@ -24,7 +24,7 @@ const JENKINS_NS_NAME = 'jenkins-instance';
  * @param {string|object|boolean|number} value The value to be stored. Accepts a string, object, boolean or number.
  */
 exports.setLocal = function (name, value) {
-    set(name, value, local);
+    exports.set(name, value, local);
 };
 
 /**
@@ -35,7 +35,7 @@ exports.setLocal = function (name, value) {
  * stored (set {@link #setLocal}).
  */
 exports.getLocal = function (name) {
-    return get(name, local);
+    return exports.get(name, local);
 };
 
 /**
@@ -79,7 +79,7 @@ exports.jenkinsInstanceNamespace = function() {
     return new StorageNamespace(JENKINS_NS_NAME, local);
 };
 
-function set(name, value, storage) {
+exports.set = function(name, value, storage) {
     if (name === undefined || name === null) {
         throw new Error('Unexpected call to store via undefined/null name.');
     }
@@ -99,9 +99,9 @@ function set(name, value, storage) {
     } else {
         throw new Error('Unexpected call to store type "' + type + '". Name: ' + name);
     }
-}
+};
 
-function get(name, storage) {
+exports.get = function(name, storage) {
     const value = storage.getItem(name);
 
     if (typeof value !== 'string') {
@@ -119,7 +119,7 @@ function get(name, storage) {
     }
 
     return value;
-}
+};
 
 /**
  * Storage Namespace.
@@ -161,7 +161,7 @@ StorageNamespace.prototype = {
      * @param {string|object|boolean|number} value The value.
      */
     set: function (name, value) {
-        return set(this.namespaceName + ':' + name, value, this.storage);
+        return exports.set(this.namespaceName + ':' + name, value, this.storage);
     },
     /**
      * Get a value from the namespace.
@@ -205,7 +205,7 @@ StorageNamespace.prototype = {
      */
     get: function (name, options) {
         // TODO: handle options
-        return get(this.namespaceName + ':' + name, this.storage);
+        return exports.get(this.namespaceName + ':' + name, this.storage);
     },
     /**
      * Remove a value from the namespace.
