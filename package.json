@@ -1,5 +1,5 @@
 {
-  "namespaceName": "@jenkins-cd/storage",
+  "name": "@jenkins-cd/storage",
   "version": "0.0.1",
   "description": "Browser storage for Jenkins JavaScript libraries",
   "main": "index.js",
