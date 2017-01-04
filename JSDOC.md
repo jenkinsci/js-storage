@@ -20,17 +20,22 @@ __Examples__:
 // Store some info in the Jenkins namespace.
 const storage = require('@jenkins-cd/storage');
 const jenkinsNS = storage.jenkinsNamespace();
-jenkinsNS.set('currentVersion', versionString);
-jenkinsNS.set('currentPlugins', pluginsArray);
+jenkinsNS.set('version', versionString);
+jenkinsNS.set('plugins', pluginsArray);
 ```
 
 ```javascript
 // After detecting that the Jenkins instance version has changed, or
-// active plugins have changed, lets clear the "jenkins-instance"
+// active plugins have changed etc, lets clear the "jenkins-instance"
 // namespace.
 const storage = require('@jenkins-cd/storage');
 const jenkinsNS = storage.jenkinsNamespace();
-jenkinsNS.clear(); // Clear all NVPs in the Jenkins namespace.
+const lastVersion = jenkinsNS.get('version');
+
+if (lastVersion !== version) {
+    jenkinsNS.clear(); // Clear all NVPs in the Jenkins namespace.
+    jenkinsNS.set('version', versionString);
+}
 ```
 
 See the [`jenkinsNamespace`](./global.html#jenkinsNamespace) and [StorageNamespace] docs for more details and examples.
