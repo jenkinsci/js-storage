@@ -48,18 +48,23 @@ describe("Namespace tests", function() {
         y.set('b', 'bvaly');
         expect(x.get('a')).toBe('avalx');
         expect(x.get('b')).toBe('bvalx');
+        expect(x.count()).toBe(2);
         expect(y.get('a')).toBe('avaly');
         expect(y.get('b')).toBe('bvaly');
+        expect(y.count()).toBe(2);
 
         // Clear from one of the namespaces only.
         x.clear();
         expect(x.get('a')).not.toBeDefined();
         expect(x.get('b')).not.toBeDefined();
+        expect(x.count()).toBe(0);
         expect(y.get('a')).toBe('avaly');
         expect(y.get('b')).toBe('bvaly');
+        expect(y.count()).toBe(2);
         y.clear();
         expect(y.get('a')).not.toBeDefined();
         expect(y.get('b')).not.toBeDefined();
+        expect(y.count()).toBe(0);
     });
 
     it("jenkinsInstanceNamespace", function() {

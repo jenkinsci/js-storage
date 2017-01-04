@@ -121,6 +121,19 @@ StorageNamespace.prototype = {
         });
     },
     /**
+     * Get the count of stored values in this namespace.
+     * <p>
+     * Note that this is not a "free" operation. This function iterates the
+     * namespace values in order to count.
+     */
+    count: function() {
+        var count = 0;
+        this.iterate(function() {
+            count++;
+        });
+        return count;
+    },
+    /**
      * Iterate the key/value pairs in this namespace.
      * @param {function} callback A callback that's called with the key (1st arg) value (2nd arg) pairs.
      * <code>this</code> for the callback is set to "this" {StorageNamespace} instance.
