@@ -8,7 +8,8 @@
     "jsdoc": "jsdoc -d jsdoc index.js StorageNamespace.js JSDOC.md"
   },
   "files": [
-    "*.js"
+    "*.js",
+    "LICENSE.txt"
   ],
   "author": "Tom Fennelly <tom.fennelly@gmail.com>",
   "license": "MIT",
