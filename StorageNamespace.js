@@ -52,7 +52,7 @@ StorageNamespace.prototype = {
      * </ul>
      *
      * @param {string} name The name/key.
-     * @param {undefined|object} options Used to configure the secondary checks that
+     * @param {object} [options] Used to configure the secondary checks that
      * should be made should there not be a value for the initially specified key.
      * See examples below.
      * @return {string|object|boolean|number|undefined} The value.
@@ -114,7 +114,7 @@ StorageNamespace.prototype = {
     },
     /**
      * Clear all stored values in this namespace.
-     * @param {undefined|boolean} clearSubspaces Also clear subspace values. Default <code>true</code>.
+     * @param {boolean} [clearSubspaces] Also clear subspace values. Default <code>true</code>.
      */
     clear: function(clearSubspaces) {
         this.iterate(function(key, value, namespace) {
@@ -127,7 +127,7 @@ StorageNamespace.prototype = {
      * Note that this is not a "free" operation. This function iterates the
      * namespace values in order to count.
      * @return {number} The count of stored values in this namespace.
-     * @param {undefined|boolean} countSubspaces Also count subspace values. Default <code>true</code>.
+     * @param {boolean} [countSubspaces] Also count subspace values. Default <code>true</code>.
      */
     count: function(countSubspaces) {
         var count = 0;
@@ -143,7 +143,7 @@ StorageNamespace.prototype = {
      * @param {function} callback A callback that's called with the key (1st arg) value (2nd arg) pairs,
      * as well as the namespace (3rd arg) that the value is in (which can be a subspace).
      * <code>this</code> for the callback is set to "this" {StorageNamespace} instance.
-     * @param {undefined|boolean} iterateSubspaces Also iterate subspace values. Default <code>true</code>.
+     * @param {boolean} [iterateSubspaces] Also iterate subspace values. Default <code>true</code>.
      */
     iterate: function (callback, iterateSubspaces) {
         const subspacePrefix = this.namespaceName + '/';
