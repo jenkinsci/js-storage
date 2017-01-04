@@ -3,15 +3,15 @@ describe("Namespace tests", function() {
 
     it("store and remove", function() {
         // store
-        const namespace = storage.localNamespace('jenkins_instance');
+        const namespace = storage.localNamespace('jenkins');
         namespace.set('a', 'aval');
         expect(namespace.get('a')).toBe('aval');
-        expect(storage.getLocal('jenkins_instance:a')).toBe('aval');
+        expect(storage.getLocal('jenkins:a')).toBe('aval');
 
         // remove
         namespace.remove('a');
         expect(namespace.get('a')).not.toBeDefined();
-        expect(storage.getLocal('jenkins_instance:a')).not.toBeDefined();
+        expect(storage.getLocal('jenkins:a')).not.toBeDefined();
     });
 
     it("subspace", function() {
@@ -59,5 +59,29 @@ describe("Namespace tests", function() {
         y.clear();
         expect(y.get('a')).not.toBeDefined();
         expect(y.get('b')).not.toBeDefined();
+    });
+
+    it("jenkinsInstanceNamespace", function() {
+        // store
+        const jenkins = storage.jenkinsInstanceNamespace();
+        jenkins.set('a', 'aval');
+        expect(jenkins.get('a')).toBe('aval');
+        expect(storage.getLocal('jenkins-instance:a')).toBe('aval');
+        jenkins.set('b', 'bval');
+        expect(jenkins.get('b')).toBe('bval');
+        expect(storage.getLocal('jenkins-instance:b')).toBe('bval');
+        jenkins.set('c', 'cval');
+
+        // remove
+        jenkins.remove('a');
+        expect(jenkins.get('a')).not.toBeDefined();
+        expect(storage.getLocal('jenkins-instance:a')).not.toBeDefined();
+        expect(jenkins.get('b')).toBe('bval');
+        expect(jenkins.get('c')).toBe('cval');
+
+        // clear
+        jenkins.clear();
+        expect(jenkins.get('b')).not.toBeDefined();
+        expect(jenkins.get('c')).not.toBeDefined();
     });
 });
