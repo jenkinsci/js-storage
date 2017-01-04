@@ -12,7 +12,7 @@ This API attempts to do the following:
 ## jenkinsNamespace <span style="opacity: 0.6;">(StorageNamespace)</span>
 
 The API offers a few top-level utility functions, but the one of most interest to Jenkins UI code is [`jenkinsNamespace`](./global.html#jenkinsNamespace),
-which returns an instance of the [StorageNamespace] class. [StorageNamespace] is where the interesting action happens.
+which returns an instance of the [StorageNamespace] class, in which all Jenkins "instance" specific data should be stored.
 
 __Examples__:
 
