@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: StorageNamespace.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: StorageNamespace.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const storage = require('./storage');
+
+/**
+ * Storage Namespace class.
+ * &lt;p>
+ * This class allows us to "unflatten" and "typen" the client Storage (localStorage or sessionStorage) i.e. allows us to introduce
+ * an artificial hierarchy within the Storage.
+ * &lt;p>
+ * This works by prefixing the key names with a namespace, allowing the clearing of a set of values by namespace,
+ * as well as storing values by the same name within different namespaces e.g. creating to StorageNamespace instances
+ * named "a/b" and "a/z" and setting a value on key "org.jenkins.magickey" on both would work perfectly fine as they
+ * would be stored in the underlying storage via keys "a/b:org.jenkins.magickey" and "a/z:org.jenkins.magickey".
+ *
+ * @param {string} name The name of the namespace. A forward slash separated value indicates sub-namespacing e.g. "a/b".
+ * @param {Storage} storage The storage instance to use e.g. {@link window.localStorage} or {@link window.sessionStorage}.
+ * @constructor
+ * @example
+ * // Store some info in a namespace.
+ * const storage = require('@jenkins-cd/storage');
+ * const jenkinsInstance = storage.localNamespace('jenkins-instance');
+ * jenkinsInstance.set('currentVersion', versionString);
+ * jenkinsInstance.set('currentPlugins', pluginsArray);
+ *
+ * @example
+ * // After detecting that the Jenkins instance version has changed, or
+ * // active plugins have changed, lets clear the "jenkins-instance"
+ * // namespace.
+ * const storage = require('@jenkins-cd/storage');
+ * const jenkinsInstance = storage.localNamespace('jenkins-instance');
+ * jenkinsInstance.clear(); // Clear all NVPs in that namespace only.
+ */
+function StorageNamespace(name, storage) {
+    this.namespaceName = name;
+    this.storageInst = storage;
+}
+StorageNamespace.prototype = {
+    /**
+     * Set a value in the namespace.
+     * @param {string} name The name/key.
+     * @param {string|object|boolean|number} value The value.
+     */
+    set: function (name, value) {
+        return storage.set(this.namespaceName + ':' + name, value, this.storageInst);
+    },
+    /**
+     * Get a value from the namespace.
+     * &lt;p>
+     * Options controlling the get can be configured by the optional "options"
+     * object argument. Available options:
+     * &lt;ul>
+     *     &lt;li>"checkDotParent": Flag (true/false) indicating that if the name is (e.g.) "a.b.c" and no value is found for that name, then fall back and check "a.b" and then "a" etc.
+     * &lt;/ul>
+     *
+     * @param {string} name The name/key.
+     * @param {undefined|object} options Used to configure the secondary checks that
+     * should be made should there not be a value for the initially specified key.
+     * See examples below.
+     * @return {string|object|boolean|number|undefined} The value.
+     * @example
+     * // get a value from a namespace
+     * const storage = require('@jenkins-cd/storage');
+     * const jenkinsInstance = storage.localNamespace('jenkins-instance');
+     * const lastVersion = jenkinsInstance.get('currentVersion');
+     *
+     * if (lastVersion !== versionString) {
+     *     // Jenkins version has changed deom the last time we ran
+     *     // in this browser. Lets clear all old stored values.
+     *     jenkinsInstance.clear();
+     * }
+     *
+     * @example
+     * // get a value from a namespace, with fallback
+     * const storage = require('@jenkins-cd/storage');
+     * const jenkinsInstance = storage.localNamespace('jenkins-instance');
+     * const logCategories = jenkinsInstance.subspace('log-categories');
+     * const sseLogLevel = logCategories.get('org.jenkins.blueocean.sse', {checkDotParent: true});
+     *
+     * if (sseLogLevel) {
+     *     // A log level for 'org.jenkins.blueocean.sse', or one of it's "dot parent"
+     *     // ('org.jenkins.blueocean' etc) is set ... do something with with it.
+     *     // Of course this would be wrapped up in a higher level logging API e.g.
+     *     // in @jenkins-cd/diag.
+     * }
+     */
+    get: function (name, options) {
+        var value = storage.get(this.namespaceName + ':' + name, this.storageInst);
+
+        if (value) {
+            return value;
+        }
+
+        if (options) {
+            if (options.checkDotParent) {
+                var nameDotTokens = name.split('\.');
+                while (nameDotTokens.length > 0) {
+                    nameDotTokens.pop();
+                    const dotParentName = nameDotTokens.join('.');
+                    value = storage.get(this.namespaceName + ':' + dotParentName, this.storageInst);
+                    if (value) {
+                        return value;
+                    }
+                }
+            }
+        }
+
+        return undefined;
+    },
+    /**
+     * Remove a value from the namespace.
+     * @param {string} name The name/key.
+     */
+    remove: function (name) {
+        return this.storageInst.removeItem(this.namespaceName + ':' + name);
+    },
+    /**
+     * Clear all stored values in this namespace.
+     * @param {undefined|boolean} clearSubspaces Also clear subspace values. Default &lt;code>true&lt;/code>.
+     */
+    clear: function(clearSubspaces) {
+        this.iterate(function(key, value, namespace) {
+            return this.storageInst.removeItem(namespace + ':' + key);
+        }, clearSubspaces);
+    },
+    /**
+     * Get the count of stored values in this namespace.
+     * &lt;p>
+     * Note that this is not a "free" operation. This function iterates the
+     * namespace values in order to count.
+     * @return {number} The count of stored values in this namespace.
+     * @param {undefined|boolean} countSubspaces Also count subspace values. Default &lt;code>true&lt;/code>.
+     */
+    count: function(countSubspaces) {
+        var count = 0;
+        this.iterate(function() {
+            count++;
+        }, countSubspaces);
+        return count;
+    },
+    /**
+     * Iterate the key/value pairs in this namespace.
+     * &lt;p>
+     * Note, values in subspaces will also be sent to the callback.
+     * @param {function} callback A callback that's called with the key (1st arg) value (2nd arg) pairs,
+     * as well as the namespace (3rd arg) that the value is in (which can be a subspace).
+     * &lt;code>this&lt;/code> for the callback is set to "this" {StorageNamespace} instance.
+     * @param {undefined|boolean} iterateSubspaces Also iterate subspace values. Default &lt;code>true&lt;/code>.
+     */
+    iterate: function (callback, iterateSubspaces) {
+        const subspacePrefix = this.namespaceName + '/';
+        const matchedEntries = [];
+
+        // default iterateSubspaces to true.
+        if (iterateSubspaces === undefined) {
+            iterateSubspaces = true;
+        }
+
+        // Iterate all keys in the Storage, looking for
+        // keys where they are an exact match for this namespace,
+        // or a subspace of this namespace (if iterateSubspaces true).
+        // Add ref objects to matchedEntries for each match.
+        for (var i = 0; i &lt; this.storageInst.length; i++) {
+            const qName = this.storageInst.key(i);
+            const keyNameTokens = qName.split(':');
+            if (keyNameTokens.length > 1) {
+                const keyNamespace = keyNameTokens.shift();
+                const key = keyNameTokens.join(':');
+                if (keyNamespace === this.namespaceName) {
+                    // Exact namespace match
+                    matchedEntries.push({
+                        qName: qName,
+                        namespace: keyNamespace,
+                        key: key
+                    });
+                } else if (iterateSubspaces &amp;&amp; keyNamespace.substring(0, subspacePrefix.length) === subspacePrefix) {
+                    // Subspace match
+                    matchedEntries.push({
+                        qName: qName,
+                        namespace: keyNamespace,
+                        key: key
+                    });
+                }
+            }
+        }
+
+        // Iterate the ref objects in matchedEntries, calling the
+        // callback for each object.
+        for (var ii = 0; ii &lt; matchedEntries.length; ii++) {
+            var matchedEntry = matchedEntries[ii];
+            var nsValue = this.storageInst.getItem(matchedEntry.qName);
+            try {
+                callback.call(this, matchedEntry.key, nsValue, matchedEntry.namespace);
+            } catch (e) {
+                console.error('Error iterating storage namespace.', e);
+            }
+        }
+    },
+    /**
+     * Create a sub-namespace of this namespace.
+     * &lt;p>
+     * Creating a sub-space "y" from a namespace "x" will result in a new namespace named "x/y" (see example below).
+     * @param {string} name The name of the sub-space.
+     * @returns {StorageNamespace} The storage namespace.
+     * @example
+     * const storage = require('@jenkins-cd/storage');
+     * const x = storage.localNamespace('x'); // "x"
+     * const y = x.subspace('y'); // "x/y"
+     */
+    subspace: function(name) {
+        return new StorageNamespace(this.namespaceName + '/' + name, this.storageInst);
+    }
+};
+
+module.exports = StorageNamespace;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="StorageNamespace.html">StorageNamespace</a></li></ul><h3>Global</h3><ul><li><a href="global.html#jenkinsNamespace">jenkinsNamespace</a></li><li><a href="global.html#localNamespace">localNamespace</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jan 04 2017 20:12:50 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

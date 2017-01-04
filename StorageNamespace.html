@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: StorageNamespace</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: StorageNamespace</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>StorageNamespace</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="StorageNamespace"><span class="type-signature"></span>new StorageNamespace<span class="signature">(name, storage)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Storage Namespace class.
+<p>
+This class allows us to "unflatten" and "typen" the client Storage (localStorage or sessionStorage) i.e. allows us to introduce
+an artificial hierarchy within the Storage.
+<p>
+This works by prefixing the key names with a namespace, allowing the clearing of a set of values by namespace,
+as well as storing values by the same name within different namespaces e.g. creating to StorageNamespace instances
+named "a/b" and "a/z" and setting a value on key "org.jenkins.magickey" on both would work perfectly fine as they
+would be stored in the underlying storage via keys "a/b:org.jenkins.magickey" and "a/z:org.jenkins.magickey".
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the namespace. A forward slash separated value indicates sub-namespacing e.g. "a/b".</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>storage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Storage</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The storage instance to use e.g. window.localStorage or window.sessionStorage.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StorageNamespace.js.html">StorageNamespace.js</a>, <a href="StorageNamespace.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Store some info in a namespace.
+const storage = require('@jenkins-cd/storage');
+const jenkinsInstance = storage.localNamespace('jenkins-instance');
+jenkinsInstance.set('currentVersion', versionString);
+jenkinsInstance.set('currentPlugins', pluginsArray);</code></pre>
+
+    <pre class="prettyprint"><code>// After detecting that the Jenkins instance version has changed, or
+// active plugins have changed, lets clear the "jenkins-instance"
+// namespace.
+const storage = require('@jenkins-cd/storage');
+const jenkinsInstance = storage.localNamespace('jenkins-instance');
+jenkinsInstance.clear(); // Clear all NVPs in that namespace only.</code></pre>
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="clear"><span class="type-signature"></span>clear<span class="signature">(clearSubspaces)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Clear all stored values in this namespace.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>clearSubspaces</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">undefined</span>
+|
+
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Also clear subspace values. Default <code>true</code>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StorageNamespace.js.html">StorageNamespace.js</a>, <a href="StorageNamespace.js.html#line119">line 119</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="count"><span class="type-signature"></span>count<span class="signature">(countSubspaces)</span><span class="type-signature"> &rarr; {number}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Get the count of stored values in this namespace.
+<p>
+Note that this is not a "free" operation. This function iterates the
+namespace values in order to count.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>countSubspaces</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">undefined</span>
+|
+
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Also count subspace values. Default <code>true</code>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StorageNamespace.js.html">StorageNamespace.js</a>, <a href="StorageNamespace.js.html#line132">line 132</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The count of stored values in this namespace.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(name, options)</span><span class="type-signature"> &rarr; {string|object|boolean|number|undefined}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Get a value from the namespace.
+<p>
+Options controlling the get can be configured by the optional "options"
+object argument. Available options:
+<ul>
+    <li>"checkDotParent": Flag (true/false) indicating that if the name is (e.g.) "a.b.c" and no value is found for that name, then fall back and check "a.b" and then "a" etc.
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name/key.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">undefined</span>
+|
+
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Used to configure the secondary checks that
+should be made should there not be a value for the initially specified key.
+See examples below.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StorageNamespace.js.html">StorageNamespace.js</a>, <a href="StorageNamespace.js.html#line85">line 85</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The value.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+|
+
+<span class="param-type">object</span>
+|
+
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">number</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// get a value from a namespace
+const storage = require('@jenkins-cd/storage');
+const jenkinsInstance = storage.localNamespace('jenkins-instance');
+const lastVersion = jenkinsInstance.get('currentVersion');
+
+if (lastVersion !== versionString) {
+    // Jenkins version has changed deom the last time we ran
+    // in this browser. Lets clear all old stored values.
+    jenkinsInstance.clear();
+}</code></pre>
+
+    <pre class="prettyprint"><code>// get a value from a namespace, with fallback
+const storage = require('@jenkins-cd/storage');
+const jenkinsInstance = storage.localNamespace('jenkins-instance');
+const logCategories = jenkinsInstance.subspace('log-categories');
+const sseLogLevel = logCategories.get('org.jenkins.blueocean.sse', {checkDotParent: true});
+
+if (sseLogLevel) {
+    // A log level for 'org.jenkins.blueocean.sse', or one of it's "dot parent"
+    // ('org.jenkins.blueocean' etc) is set ... do something with with it.
+    // Of course this would be wrapped up in a higher level logging API e.g.
+    // in @jenkins-cd/diag.
+}</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="iterate"><span class="type-signature"></span>iterate<span class="signature">(callback, iterateSubspaces)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Iterate the key/value pairs in this namespace.
+<p>
+Note, values in subspaces will also be sent to the callback.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A callback that's called with the key (1st arg) value (2nd arg) pairs,
+as well as the namespace (3rd arg) that the value is in (which can be a subspace).
+<code>this</code> for the callback is set to "this" {StorageNamespace} instance.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterateSubspaces</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">undefined</span>
+|
+
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Also iterate subspace values. Default <code>true</code>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StorageNamespace.js.html">StorageNamespace.js</a>, <a href="StorageNamespace.js.html#line148">line 148</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="remove"><span class="type-signature"></span>remove<span class="signature">(name)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Remove a value from the namespace.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name/key.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StorageNamespace.js.html">StorageNamespace.js</a>, <a href="StorageNamespace.js.html#line112">line 112</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(name, value)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Set a value in the namespace.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name/key.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">object</span>
+|
+
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StorageNamespace.js.html">StorageNamespace.js</a>, <a href="StorageNamespace.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="subspace"><span class="type-signature"></span>subspace<span class="signature">(name)</span><span class="type-signature"> &rarr; {<a href="StorageNamespace.html">StorageNamespace</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Create a sub-namespace of this namespace.
+<p>
+Creating a sub-space "y" from a namespace "x" will result in a new namespace named "x/y" (see example below).
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the sub-space.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StorageNamespace.js.html">StorageNamespace.js</a>, <a href="StorageNamespace.js.html#line208">line 208</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The storage namespace.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="StorageNamespace.html">StorageNamespace</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const storage = require('@jenkins-cd/storage');
+const x = storage.localNamespace('x'); // "x"
+const y = x.subspace('y'); // "x/y"</code></pre>
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="StorageNamespace.html">StorageNamespace</a></li></ul><h3>Global</h3><ul><li><a href="global.html#jenkinsNamespace">jenkinsNamespace</a></li><li><a href="global.html#localNamespace">localNamespace</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jan 04 2017 20:12:50 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
