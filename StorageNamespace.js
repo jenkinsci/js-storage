@@ -125,7 +125,7 @@ StorageNamespace.prototype = {
      * <p>
      * Note that this is not a "free" operation. This function iterates the
      * namespace values in order to count.
-     * @param {number} The count of stored values in this namespace.
+     * @return {number} The count of stored values in this namespace.
      */
     count: function() {
         var count = 0;
