@@ -1,5 +1,5 @@
 describe("Basic tests", function() {
-    var storage = require('../index');
+    var storage = require('../storage');
 
     it("store and remove", function() {
         // store

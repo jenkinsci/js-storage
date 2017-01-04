@@ -1,5 +1,5 @@
 describe("Storage of different types", function() {
-    var storage = require('../index');
+    var storage = require('../storage');
 
     it("string", function() {
         storage.setLocal('a', 'aval');
