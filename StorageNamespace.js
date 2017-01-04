@@ -83,8 +83,27 @@ StorageNamespace.prototype = {
      * }
      */
     get: function (name, options) {
-        // TODO: handle options
-        return storage.get(this.namespaceName + ':' + name, this.storageInst);
+        var value = storage.get(this.namespaceName + ':' + name, this.storageInst);
+
+        if (value) {
+            return value;
+        }
+
+        if (options) {
+            if (options.checkDotParent) {
+                var nameDotTokens = name.split('\.');
+                while (nameDotTokens.length > 0) {
+                    nameDotTokens.pop();
+                    const dotParentName = nameDotTokens.join('.');
+                    value = storage.get(this.namespaceName + ':' + dotParentName, this.storageInst);
+                    if (value) {
+                        return value;
+                    }
+                }
+            }
+        }
+
+        return undefined;
     },
     /**
      * Remove a value from the namespace.
