@@ -1,9 +1,10 @@
 describe("Namespace tests", function() {
+    var index = require('../index');
     var storage = require('../storage');
 
     it("store and remove", function() {
         // store
-        const namespace = storage.localNamespace('jenkins');
+        const namespace = index.localNamespace('jenkins');
         namespace.set('a', 'aval');
         expect(namespace.get('a')).toBe('aval');
         expect(storage.getLocal('jenkins:a')).toBe('aval');
@@ -15,7 +16,7 @@ describe("Namespace tests", function() {
     });
 
     it("subspace", function() {
-        const x = storage.localNamespace('x');
+        const x = index.localNamespace('x');
         const y = x.subspace('y');
 
         // Storing different values under the same key should be fine.
@@ -37,7 +38,7 @@ describe("Namespace tests", function() {
     });
 
     it("clear", function() {
-        const x = storage.localNamespace('x');
+        const x = index.localNamespace('x');
         const y = x.subspace('y');
 
         // Storing values in both namespaces.
@@ -63,7 +64,7 @@ describe("Namespace tests", function() {
 
     it("jenkinsInstanceNamespace", function() {
         // store
-        const jenkins = storage.jenkinsInstanceNamespace();
+        const jenkins = index.jenkinsNamespace();
         jenkins.set('a', 'aval');
         expect(jenkins.get('a')).toBe('aval');
         expect(storage.getLocal('jenkins-instance:a')).toBe('aval');

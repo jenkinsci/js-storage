@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine spec/*.js",
-    "jsdoc": "jsdoc -d jsdoc index.js JSDOC.md"
+    "jsdoc": "jsdoc -d jsdoc index.js StorageNamespace.js JSDOC.md"
   },
   "author": "Tom Fennelly <tom.fennelly@gmail.com>",
   "license": "MIT",

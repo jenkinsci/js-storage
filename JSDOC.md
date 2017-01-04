@@ -9,9 +9,9 @@ This API attempts to do the following:
 1. Support subspaces i.e. namespaces inside namespaces e.g. you could have the "log-gategory" namespace inside the "jenkins-instance" namespace i.e. "jenkins-instance/log-gategory". Another one might be "jenkins-instance/classes-info" for storing classes metadata Vs the client UI contantly firing REST API calls to get it (see JENKINS-40080).
 1. Support `get` fallback options, whereby you can configure the `get` to look in the parent namespaces, or if using a dot separated key in the name (the N part of the NVP) that it can be configured to check back along the "dot parent path" e.g. if "org.jenkins.a.b" has no value, then fallback and check "org.jenkins.a" etc. This would be useful for e.g. log categories.
 
-## jenkinsInstanceNamespace <span style="opacity: 0.6;">(StorageNamespace)</span>
+## jenkinsNamespace <span style="opacity: 0.6;">(StorageNamespace)</span>
 
-The API offers a few top-level utility functions, but the one of most interest to Jenkins UI code is [`jenkinsInstanceNamespace`](./global.html#jenkinsInstanceNamespace),
+The API offers a few top-level utility functions, but the one of most interest to Jenkins UI code is [`jenkinsNamespace`](./global.html#jenkinsNamespace),
 which returns an instance of the [StorageNamespace] class. [StorageNamespace] is where the interesting action happens.
 
 __Examples__:
@@ -19,9 +19,9 @@ __Examples__:
 ```javascript
 // Store some info in the Jenkins namespace.
 const storage = require('@jenkins-cd/storage');
-const jenkinsInstance = storage.jenkinsInstanceNamespace();
-jenkinsInstance.set('currentVersion', versionString);
-jenkinsInstance.set('currentPlugins', pluginsArray);
+const jenkinsNS = storage.jenkinsNamespace();
+jenkinsNS.set('currentVersion', versionString);
+jenkinsNS.set('currentPlugins', pluginsArray);
 ```
 
 ```javascript
@@ -29,11 +29,11 @@ jenkinsInstance.set('currentPlugins', pluginsArray);
 // active plugins have changed, lets clear the "jenkins-instance"
 // namespace.
 const storage = require('@jenkins-cd/storage');
-const jenkinsInstance = storage.jenkinsInstanceNamespace();
-jenkinsInstance.clear(); // Clear all NVPs in the Jenkins namespace.
+const jenkinsNS = storage.jenkinsNamespace();
+jenkinsNS.clear(); // Clear all NVPs in the Jenkins namespace.
 ```
 
-See the [`jenkinsInstanceNamespace`](./global.html#jenkinsInstanceNamespace) and [StorageNamespace] docs for more details and examples.
+See the [`jenkinsNamespace`](./global.html#jenkinsNamespace) and [StorageNamespace] docs for more details and examples.
 
 [Storage]: https://developer.mozilla.org/en-US/docs/Web/API/Storage
 [localStorage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
