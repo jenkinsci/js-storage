@@ -1,6 +1,6 @@
 {
   "name": "@jenkins-cd/storage",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Browser storage for Jenkins JavaScript libraries",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,10 @@
   ],
   "author": "Tom Fennelly <tom.fennelly@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tfennelly/jenkins-js-storage"
+  },
   "dependencies": {
     "localstorage-memory": "^1.0.2"
   },
