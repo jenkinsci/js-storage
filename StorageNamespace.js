@@ -48,7 +48,7 @@ StorageNamespace.prototype = {
      * Options controlling the get can be configured by the optional "options"
      * object argument. Available options:
      * <ul>
-     *     <li>"checkDotParent": Flag (true/false) indicating that if the name is (e.g.) "a.b.c" and no value is found for that name, then fall back and check "a.b" and then "a" etc.
+     *     <li>"checkDotParent": Flag (true/false) or an array of permitted values, indicating that if the name is (e.g.) "a.b.c" and no value is found for that name (or the found value is not permitted), then fall back and check "a.b" and then "a" etc.
      * </ul>
      *
      * @param {string} name The name/key.
@@ -86,7 +86,16 @@ StorageNamespace.prototype = {
         var value = storage.get(this.namespaceName + ':' + name, this.storageInst);
 
         if (value) {
-            return value;
+            // Do not return the value if there's a options.checkDotParent config
+            // with value constraints on it.
+            if (options && options.checkDotParent && Array.isArray(options.checkDotParent)) {
+                // options.checkDotParent is defining an enum of permitted values.
+                if (options.checkDotParent.indexOf(value) !== -1) {
+                    return value;
+                }
+            } else {
+                return value;
+            }
         }
 
         if (options) {
@@ -97,7 +106,14 @@ StorageNamespace.prototype = {
                     const dotParentName = nameDotTokens.join('.');
                     value = storage.get(this.namespaceName + ':' + dotParentName, this.storageInst);
                     if (value) {
-                        return value;
+                        if (Array.isArray(options.checkDotParent)) {
+                            // options.checkDotParent is defining an enum of permitted values.
+                            if (options.checkDotParent.indexOf(value) !== -1) {
+                                return value;
+                            }
+                        } else {
+                            return value;
+                        }
                     }
                 }
             }

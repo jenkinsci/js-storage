@@ -18,4 +18,28 @@ describe("StorageNamespace get function options tests", function() {
         expect(jenkinsNS.get('x')).not.toBeDefined();
         expect(jenkinsNS.get('x', {checkDotParent: true})).not.toBeDefined();
     });
+
+    it("checkDotParent - permitted values", function() {
+        // Set a series of values along a "dot parent" graph
+        jenkinsNS.set('a', 'a');
+        jenkinsNS.set('a.b', 'b');
+        jenkinsNS.set('a.b.c', 'c');
+        jenkinsNS.set('a.b.c.d', 'd');
+
+        // Just yes/no first
+        expect(jenkinsNS.get('a.b.c.d', {checkDotParent: true})).toBe('d');
+
+        // Constrain the permitted value to values that don't match
+        // what's set, or any of the parent.
+        expect(jenkinsNS.get('a.b.c.d', {checkDotParent: []})).not.toBeDefined();
+        expect(jenkinsNS.get('a.b.c.d', {checkDotParent: ['x']})).not.toBeDefined();
+        expect(jenkinsNS.get('a.b.c.d', {checkDotParent: ['x', 'y']})).not.toBeDefined();
+
+        // Constrain the permitted value to values that do match
+        // what's set, or any of the parent.
+        expect(jenkinsNS.get('a.b.c.d', {checkDotParent: ['a', 'b', 'c', 'd']})).toBe('d');
+        expect(jenkinsNS.get('a.b.c.d', {checkDotParent: ['a', 'b', 'c']})).toBe('c');
+        expect(jenkinsNS.get('a.b.c.d', {checkDotParent: ['a', 'b']})).toBe('b');
+        expect(jenkinsNS.get('a.b.c.d', {checkDotParent: ['a']})).toBe('a');
+    });
 });
