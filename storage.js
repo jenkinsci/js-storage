@@ -10,12 +10,12 @@ if (!global.window.localStorage) {
     global.window.localStorage = require('localstorage-memory');
 }
 
-const local = global.window.localStorage;
+var local = global.window.localStorage;
 exports.local = local;
 
-const TYPE_OBJECT = '_$_object:';
-const TYPE_NUMBER = '_$_number:';
-const TYPE_BOOLEAN = '_$_boolean:';
+var TYPE_OBJECT = '_$_object:';
+var TYPE_NUMBER = '_$_number:';
+var TYPE_BOOLEAN = '_$_boolean:';
 
 /**
  * Set a value in local storage.
@@ -53,7 +53,7 @@ exports.set = function(name, value, storage) {
         throw new Error('Unexpected call to store undefined/null value in storage. Name: ' + name);
     }
 
-    const type = typeof value;
+    var type = typeof value;
     if (type === 'string') {
         storage.setItem(name, value);
     } else if (type === 'object') {
@@ -68,7 +68,7 @@ exports.set = function(name, value, storage) {
 };
 
 exports.get = function(name, storage) {
-    const value = storage.getItem(name);
+    var value = storage.getItem(name);
 
     if (typeof value !== 'string') {
         return undefined;

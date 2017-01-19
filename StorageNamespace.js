@@ -1,4 +1,4 @@
-const storage = require('./storage');
+var storage = require('./storage');
 
 /**
  * Storage Namespace class.
@@ -103,7 +103,7 @@ StorageNamespace.prototype = {
                 var nameDotTokens = name.split('\.');
                 while (nameDotTokens.length > 0) {
                     nameDotTokens.pop();
-                    const dotParentName = nameDotTokens.join('.');
+                    var dotParentName = nameDotTokens.join('.');
                     value = storage.get(this.namespaceName + ':' + dotParentName, this.storageInst);
                     if (value) {
                         if (Array.isArray(options.checkDotParent)) {
@@ -162,8 +162,8 @@ StorageNamespace.prototype = {
      * @param {boolean} [iterateSubspaces] Also iterate subspace values. Default <code>true</code>.
      */
     iterate: function (callback, iterateSubspaces) {
-        const subspacePrefix = this.namespaceName + '/';
-        const matchedEntries = [];
+        var subspacePrefix = this.namespaceName + '/';
+        var matchedEntries = [];
 
         // default iterateSubspaces to true.
         if (iterateSubspaces === undefined) {
@@ -175,11 +175,11 @@ StorageNamespace.prototype = {
         // or a subspace of this namespace (if iterateSubspaces true).
         // Add ref objects to matchedEntries for each match.
         for (var i = 0; i < this.storageInst.length; i++) {
-            const qName = this.storageInst.key(i);
-            const keyNameTokens = qName.split(':');
+            var qName = this.storageInst.key(i);
+            var keyNameTokens = qName.split(':');
             if (keyNameTokens.length > 1) {
-                const keyNamespace = keyNameTokens.shift();
-                const key = keyNameTokens.join(':');
+                var keyNamespace = keyNameTokens.shift();
+                var key = keyNameTokens.join(':');
                 if (keyNamespace === this.namespaceName) {
                     // Exact namespace match
                     matchedEntries.push({

@@ -6,10 +6,10 @@
 /**
  * @ignore
  */
-const storage = require('./storage');
-const StorageNamespace = require('./StorageNamespace');
+var storage = require('./storage');
+var StorageNamespace = require('./StorageNamespace');
 
-const JENKINS_NS_NAME = 'jenkins-instance';
+var JENKINS_NS_NAME = 'jenkins-instance';
 
 /**
  * Get a local namespace.
