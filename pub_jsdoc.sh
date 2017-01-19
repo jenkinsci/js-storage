@@ -5,7 +5,7 @@ npm run jsdoc
 pushd jsdoc
 
 git init
-git remote add jsdoc git@github.com:tfennelly/jenkins-js-storage.git
+git remote add jsdoc git@github.com:jenkinsci/js-storage.git
 git fetch --depth=1 jsdoc gh-pages
 
 git add --all

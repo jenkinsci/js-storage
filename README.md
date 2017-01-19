@@ -8,6 +8,6 @@ npm install --save @jenkins-cd/storage
 
 # Documentation
 
-See [API Documentation](https://tfennelly.github.io/jenkins-js-storage/).
+See [API Documentation](https://jenkinsci.github.io/js-storage/).
 
 [Storage]: https://developer.mozilla.org/en-US/docs/Web/API/Storage
