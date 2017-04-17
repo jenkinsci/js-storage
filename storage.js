@@ -1,16 +1,15 @@
 /**
  * Jenkins client-side storage.
  */
+var local;
 
-if (global.window === undefined) {
-    global.window = {};
-}
-if (!global.window.localStorage) {
+if (global.window && global.window.localStorage) {
+    local = global.window.localStorage;
+} else {
     console.warn('No window.localStorage. Creating a mock in-memory localStorage, assuming this is running in a test environment.');
-    global.window.localStorage = require('localstorage-memory');
+    local = require('localstorage-memory');
 }
 
-var local = global.window.localStorage;
 exports.local = local;
 
 var TYPE_OBJECT = '_$_object:';
