@@ -37,9 +37,14 @@ exports.localNamespace = function(name) {
  * (see {@link StorageNamespace#clear}) when it detects that the backend Jenkins instance has changed in some
  * way i.e. a new Jenkins version or a change in plugin configuration.
  *
+ * @param {string|undefined} jenkinsInstanceId The Jenkins Instance ID, or {@code undefined}.
  * @returns {StorageNamespace} The storage namespace for the Jenkins instance.
  * @see {@link StorageNamespace#subspace}
  */
-exports.jenkinsNamespace = function() {
-    return new StorageNamespace(JENKINS_NS_NAME, storage.local);
+exports.jenkinsNamespace = function(jenkinsInstanceId) {
+    if (jenkinsInstanceId) {
+        return new StorageNamespace(JENKINS_NS_NAME + '-' + jenkinsInstanceId, storage.local);
+    } else {
+        return new StorageNamespace(JENKINS_NS_NAME, storage.local);
+    }
 };
