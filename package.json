@@ -1,6 +1,6 @@
 {
   "name": "@jenkins-cd/storage",
-  "version": "0.0.6",
+  "version": "0.0.7-tf-beta1",
   "description": "Browser storage for Jenkins JavaScript libraries",
   "main": "index.js",
   "scripts": {
